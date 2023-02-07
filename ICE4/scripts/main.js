@@ -1,6 +1,6 @@
 /**
  * @author Angelica Kusik
- * @version 1.2.0
+ * @version 2.0.0
  * @since January 12, 2023
  * @description WEBD6201 in class demonstrations
  * 
@@ -8,7 +8,7 @@
 
 (function () {
 
-    function DisplayButton() {
+    function DisplayHome() {
 
         let randomButton = document.getElementById("RandonButton")
         randomButton.addEventListener("click", function() {
@@ -33,47 +33,128 @@
         let secondString = `${ firstString } main paragraph that we added through javascript`
         mainParagraph.textContent = secondString
 
-        //must use this in order for the element we created to appear on the page
-        mainContent.before(mainParagraph)
+        /**
+         * textContent - changes text node
+         * innerHTML - overwrites anything in the innerHTML of that element
+         */
 
         mainContent.appendChild(mainParagraph) 
-        //mainContent.before(mainParagraph) 
-
-        //delete element
-        //document.getElementById("RandomButton").remove()
-
-        //document.getElementById("RandomButton").remove()
-        
-        //textContent - changes text node
-        //innerHTML - overwrites anything in the innerHTML of that element
-        //Note: Must use a back-ticks (`)
-        // document.innerHTML = `
-        //     <div class="container">
-        //         <h1 class="display-1">Hello WEBD 6201</h1>
-        //         <p class="mt-5 lead">and .. what do you this</p>
-        //     </div>
-        // `
-        //if we use document.textContent it will work but not the way we want, it will just 
-        //show an empty page with the code below shown as a string.
-
-        let sohaib = new Contact("Sohaib Mohiuddin", "12345678", "sohaib@sohaib")
-
-        console.log(sohaib.toString())
-
 
     }
 
-    function Start() {
-        console.log("App Started!")
+    function DisplayProjects(){
+      console.log("Projects Page");
 
-        var x = 'Webd6201';
+    }
+
+    function DisplayAbout(){
+      console.log("About Page");
+    }
+
+    function DisplayContactList(){
+      
+      if(localStorage.length > 0){
+        
+        let contactList = document.getElementById("contactList") //Here we are returning the id we have on the table on the Contact List page
+        let data = "" // Add data to this variable. Append deserialized data from local storage to data
+        let keys = Object.keys(localStorage) // Return a String array of keys
+        let index = 1 // Count number of keys
+
+        //for every key in the keys collection
+        //for of = for every key in keys do something
+        for (const key of keys){
+          let contactData = localStorage.getItem(key) // Get localStorage data value related to the key
+          let contact = new Contact()
+
+          contact.deserialize(contactData)
+
+          // Inject repeatable row into the contactList
+          data += 
+          `<tr>
+            <th scope="row" class="text-center">${ index }</th>
+            <td class="text-center">${ contact.Name }</td>
+            <td class="text-center">${ contact.ContactNumber }</td>
+            <td class="text-center">${ contact.EmailAddress }</td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+          <tr/>
+          `
+          index++
+        }
+
+        contactList.innerHTML = data
+      }
+
+    }
+
+    function DisplayContacts(){
+
+      let submitButton = document.getElementById("submitButton")
+      let subscribeCheckbox = document.getElementById("subscribeCheckbox")
+
+      //Session Storage: Temporary storage on the browser
+      //localStorage: Key working pairs
+      //Both located under the Application tab of the developer tools 
+      //remember when retrieving data from the local storage that variable names are case sensitive
+
+      //localStorage Example
+      // localStorage.setItem("Random Variable", "random variable for testing")
+      // console.log(localStorage.getItem("Random Variable"))
+      // localStorage.removeItem("Random Variable")
+
+      submitButton.addEventListener("click", function() {
+        //event.preventDefault()
+        if (subscribeCheckbox.checked){
+          //only if user subscribe we want to save the data on the database
+          //the parameters are the ids that we are suing on the form.
+          let contact = new Contact(fullName.value, contactNumber.value, emailAddress.value)
+
+          if(contact.serialize()){
+            //if the contact is not blank and can be serialized make a key that will be the first letter of the 
+            //contact name and add the data (in this case the number of seconds passed since 70's)
+            //Note: if we hit the submit button multiple times or even hold it for a bit it will save 
+            //multiple contacts on the database because Date() updates every second (or milisecond), so the key will
+            //be different creating multiple contacts with different keys but same information otherwise
+            let key = contact.Name.substring(0, 1) + Date.now()
+            localStorage.setItem(key, contact.serialize())
+          }
+        }
+      })
+
+    }
+
+    function DisplayReferences(){
+      console.log("References Page");
+    }
+
+    function DisplayServices(){
+      console.log("Services Page");
+    }
+
+    function Start() {
+        console.log("App Started Successfully")
 
         switch(document.title) {
-            case "Home - WEBD 6201 Demo":
-              DisplayButton()
+            case "Home - WEBD6201 Demo":
+              DisplayHome()
               break;
-            case "Projects - WEBD 6201 Demo":
-                DisplayButton()
+            case "About - WEBD6201 Demo":
+              DisplayAbout()
+              break;
+            case "Contact List - WEBD6201 Demo":
+              DisplayContactList()
+              break;
+            case "Contact Us - WEBD6201 Demo":
+              DisplayContacts()
+              break;
+            case "Projects - WEBD6201 Demo":
+              DisplayProjects()
+              break;
+            case "References - WEBD6201 Demo":
+              DisplayReferences()
+              break;
+            case "Services - WEBD6201 Demo":
+              DisplayServices()
               break;
             default:
               // code block

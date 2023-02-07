@@ -31,6 +31,29 @@ class Contact{
         this.m_emailAddress = emailAddress
     }
 
+    //Public Utility Method
+    //Used to serialize and deserialize the data
+
+    //Serialize Method
+    serialize() {
+        if(this.Name !== "" && this.ContactNumber !== "" && this.EmailAddress !== "")
+            return `${ this.Name }, ${ this.ContactNumber }, ${ this.EmailAddress } `
+        
+        console.error("One or more properties pr fields of the contact object are missing or invalid")
+        return null
+    }
+
+    //Deserialize Method
+    //gets all the data from the database and separate it based on the commas
+    //each data piece represents each piece of data (each record on the database)
+    deserialize(data) {
+        let propertyArray = data.split(", ")
+        this.Name = propertyArray[0]
+        this.ContactNumber = propertyArray[1]
+        this.EmailAddress = propertyArray[2]
+    }
+
+
     //Public Override Method
 
     toString(){
