@@ -10,12 +10,33 @@
 
     function DisplayHome() {
 
-        let randomButton = document.getElementById("RandonButton")
-        randomButton.addEventListener("click", function() {
-            //console.log("button was clicked")
-            //Location.href = '../webd6201-in-class-demo/projects.html' => this doesn't work!
-            window.location.href = "projects.html";
+        //Least amount of memory heap
+        //let randonButton = document.getElementById("randonButton")
+        // randomButton.addEventListener("click", function() {
+        //     //console.log("button was clicked")
+        //     //Location.href = '../webd6201-in-class-demo/projects.html' => this doesn't work!
+        //     window.location.href = "projects.html";
+        // })
+
+        console.log("I am inside the DisplayHome method");
+        //Most amount of memory heap
+        $("#randomButton").on("click", function() {
+
+          console.log("I am inside the event handler");
+
+          window.location.href = "contact.html";
         })
+
+
+        //Second most amount of memory heap - JS QuerySelectorAll
+        // document.querySelectorAll("#randomButton").forEach(element => {
+        //   element.addEventListener("click", () => {
+
+        //     location.href = "contact.html";
+        //   })
+        // })
+
+
 
         let mainContent = document.getElementsByTagName("main")[0] //get methods return an array
         mainContent.setAttribute("class", "container")
