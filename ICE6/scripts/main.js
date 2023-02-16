@@ -86,7 +86,7 @@
         console.log(`The index: ${index} - The key: ${key}`)
 
         let contactData = localStorage.getItem(key) // Get localStorage data value related to the key
-        let contact = new Contact()
+        let contact = new core.Contact()
 
         contact.deserialize(contactData)
 
@@ -133,7 +133,7 @@
 
   function AddContact(fullName, contactNumber, emailAddress ){
 
-    let contact = new Contact(fullName, contactNumber, emailAddress)
+    let contact = new core.Contact(fullName, contactNumber, emailAddress)
 
     if (contact.serialize()) {
       //if the contact is not blank and can be serialized make a key that will be the first letter of the 
@@ -201,7 +201,7 @@
         {
           // default behaviour
           //get contact info from localStorage
-          let contact = new Contact()
+          let contact = new core.Contact()
 
           contact.deserialize(localStorage.getItem(page)) //this is not really a page, this is whatever after th hash in the url
 
