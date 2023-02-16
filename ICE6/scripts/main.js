@@ -1,6 +1,6 @@
 /**
  * @author Angelica Kusik
- * @version 2.0.0
+ * @version 6.0.0
  * @since January 12, 2023
  * @description WEBD6201 in class demonstrations
  * 
@@ -106,23 +106,44 @@
       }  
 
       contactList.innerHTML = data
-      
-      $(".edit").click(function () {
-        console.log("Edit button was clicked")
-        var button_value = $(this).val();
+
+      $("button.delete").click(function () {
+        if(confirm("Are you sure you want to delete this?")) //confirm method reserved for prompts / confirmations
+          //console.log("delete button was clicked")
+          localStorage.removeItem($(this).val())
         
-        console.log(button_value)
+        //location.reload()
+        location.href = 'contact-list.com'
       })
 
-      $(".delete").click(function () {
-        console.log("delete button was clicked")
-        localStorage.removeItem($(this).val())
-        
-        location.reload()
+      $("button.edit").on("click",function () {
+        //console.log("Edit button was clicked")
+        //pass in the edit page url and the key value that we are getting from the button
+        window.location.href = 'edit.html#' + $(this).val()
       })
 
     }
 
+    //function for add button
+    $("#addButton").on("click", () => {
+      location.href = 'edit.html#Add'
+    })
+
+  }
+
+  function AddContact(fullName, contactNumber, emailAddress ){
+
+    let contact = new Contact(fullName, contactNumber, emailAddress)
+
+    if (contact.serialize()) {
+      //if the contact is not blank and can be serialized make a key that will be the first letter of the 
+      //contact name and add the data (in this case the number of seconds passed since 70's)
+      //Note: if we hit the submit button multiple times or even hold it for a bit it will save 
+      //multiple contacts on the database because Date() updates every second (or milisecond), so the key will
+      //be different creating multiple contacts with different keys but same information otherwise
+      let key = contact.Name.substring(0, 1) + Date.now()
+      localStorage.setItem(key, contact.serialize())
+    }
   }
 
   function DisplayContacts() {
@@ -145,19 +166,72 @@
       if (subscribeCheckbox.checked) {
         //only if user subscribe we want to save the data on the database
         //the parameters are the ids that we are suing on the form.
-        let contact = new Contact(fullName.value, contactNumber.value, emailAddress.value)
-
-        if (contact.serialize()) {
-          //if the contact is not blank and can be serialized make a key that will be the first letter of the 
-          //contact name and add the data (in this case the number of seconds passed since 70's)
-          //Note: if we hit the submit button multiple times or even hold it for a bit it will save 
-          //multiple contacts on the database because Date() updates every second (or milisecond), so the key will
-          //be different creating multiple contacts with different keys but same information otherwise
-          let key = contact.Name.substring(0, 1) + Date.now()
-          localStorage.setItem(key, contact.serialize())
-        }
+        AddContact(fullName.value, contactNumber.value, emailAddress.value)
       }
     })
+
+  }
+
+  function DisplayEditPage(){
+    //get the hash on the url
+    //console.log(location.hash)
+
+    //assign the word after the hash symbol and assign it to a variable
+    let page = location.hash.substring(1)
+
+    switch (page) {
+      case "Add":
+        {
+          $("#welcome").text("Add - WEBD6201 Demo")
+
+          $("#editButton").html(`<i class="fas fa-plus-circle fa-lg"></i> Add`)
+
+          $("#editButton").on("click", (event) => {
+            event.preventDefault()
+
+            //get the form info (name ,contact number, email address)
+            AddContact(fullName.value, contactNumber.value, emailAddress.value)
+
+            //redirect to contact list
+            location.href = "contact-list.html"
+          })
+        }
+        break;
+      default:
+        {
+          // default behaviour
+          //get contact info from localStorage
+          let contact = new Contact()
+
+          contact.deserialize(localStorage.getItem(page)) //this is not really a page, this is whatever after th hash in the url
+
+          //display contact info in edit form
+          $("#fullName").val(contact.Name)
+          $("#contactNumber").val(contact.ContactNumber)
+          $("#emailAddress").val(contact.EmailAddress)
+
+          //when edit button pressed, update the contact
+          $("#editButton").on("click", (event) => {
+            event.preventDefault()
+
+            //get all changes from the form
+            contact.Name = $("#fullName").val()
+            contact.ContactNumber = $("#contactNumber").val()
+            contact.EmailAddress = $("#emailAddress").val()
+
+            //replace the changes in localStorage
+            localStorage.setItem(page, contact.serialize()) //transform the contact info into a string separated by commas
+
+            //go back to contactlist.html
+            location.href = 'contact-list.html'
+
+          })
+
+        }
+
+        break
+    }
+
 
   }
 
@@ -193,6 +267,9 @@
         break;
       case "Services - WEBD6201 Demo":
         DisplayServices()
+        break;
+      case "Edit - WEBD6201 Demo":
+        DisplayEditPage()
         break;
       default:
       // code block
