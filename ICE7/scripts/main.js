@@ -8,15 +8,33 @@
 
 (function () {
 
+  function DisplayNavBar(){
+    // Week 7 - AJAX
+    // Instantiate the XHR Object
+    let XHR = new XMLHttpRequest()
+
+    // add event listener for readystatechange (there are 5 of them - 0-5, 0 meaning it's not ready)
+    XHR.addEventListener("readystatechange", () => {
+      // if the page is absolutelly ready
+      if (XHR.readyState === 4 && XHR.status === 200){
+        //console.log(XHR.responseText)
+
+        $("#navigationBar").html(XHR.responseText)
+      }
+      
+    })
+
+    // receive the repsonse, connect and get data
+    // Important: here we use relative path, because even the code is on main, we are calling it from the index or the other page
+    XHR.open("GET", "./static/header.html")
+
+    // send the request to server to await response
+    XHR.send()
+
+  }
+
   function DisplayHome() {
 
-    //Least amount of memory heap
-    //let randonButton = document.getElementById("randonButton")
-    // randomButton.addEventListener("click", function() {
-    //     //console.log("button was clicked")
-    //     //Location.href = '../webd6201-in-class-demo/projects.html' => this doesn't work!
-    //     window.location.href = "projects.html";
-    // })
 
     //Most amount of memory heap
     $("#randomButton").on("click", function () {
@@ -24,43 +42,10 @@
     })
 
 
-    //Second most amount of memory heap - JS QuerySelectorAll
-    // document.querySelectorAll("#randomButton").forEach(element => {
-    //   element.addEventListener("click", () => {
-
-    //     location.href = "contact.html";
-    //   })
-    // })
-
-
-    // let mainContent = document.getElementsByTagName("main")[0] //get methods return an array
-    // mainContent.setAttribute("class", "container")
-
-
-    // let mainParagraph = document.createElement("p")
-    // mainParagraph.setAttribute("id", "MainParagraph")
-    // mainParagraph.setAttribute("class", "mt-3 container")
-
-    //Concatenation vs Interpolation examples:
-    // concatenation - '1' + '2' + '3'
-    // interpolation - `${var_1}`
-    //The first join the strings, the second interprets a string with variables
     let firstString = "This is a "
     let secondString = `${firstString} main paragraph that we added to the page using JQuery`
-    //mainParagraph.textContent = secondString
 
-    /**
-     * textContent - changes text node
-     * innerHTML - overwrites anything in the innerHTML of that element
-     */
-
-    //mainContent.appendChild(mainParagraph) 
-
-    //Week 5 - Class 2: A better approach than the one used before
-    //to create and display a 'p' element in the age using jquery
-
-    $("main").addClass("container").append(`<p id="mainParagraph" class="mt-3 mb-5 container"> ${secondString} </p>`)
-
+    $("main").addClass("container").append(`<p id="mainParagraph" class="mt-3 mb-5 container"> ${secondString} </p>`)    
   }
 
   function DisplayProjects() {
@@ -146,28 +131,48 @@
     }
   }
 
-  function ValidateInput(inputFieldId, regularExpression, exception){
-    let messageArea = $("#messageArea").hide()
+  function ValidateInput(inputFieldID, regularExpression, exception) {
+    let messageArea = $('#messageArea').hide()
 
-    $("#" + inputFieldId).on("blur", function() {
-      let inputText = $(this).val()
+    $('#' + inputFieldID).on("blur", function() {
+        let inputText = $(this).val()
 
-      //failure to match regex expression
-      if(!regularExpression.test(inputText)){
-        $(this).trigger("focus").trigger("select")
-        
-        messageArea.addClass("alert alert-danger").text(exception).show()
-      }else {
-        //success in matching regex
-        messageArea.removeAttr("class").hide()
-      }
+        if (!regularExpression.test(inputText)) {
+            // failure to match full name with regex
+
+            $(this).trigger("focus").trigger("select")
+
+            messageArea.addClass("alert alert-danger").text(exception).show()
+        } else {
+            // success in matching full name with regex
+
+            messageArea.removeAttr("class").hide()
+        }
     })
   }
 
   function ContactFormValidate(){
     let emailAddressPattern =  /^[\w-\.]+@([\w-]+\.)+[\w-][^\D]{1,10}$/g
     let fullNamePattern =  /^([A-Z][a-z]{1,25})((\s|,|-)([A-Z][a-z]{1,}))*(\s|,|-)*([A-Z][a-z]{1,})*$/g
-    let contactNumberPattern = 
+    let contactNumberPattern = /^(\()?(\+)?(\d{0,3})?(\s|-|\))?(\d{3,})(\s|-)?(\d{3,})(\s|-)?(\d{4,})$/g
+    
+    // The contactNumber Regex below accepts the following:
+    // +123 416 835 9851
+    // 4168359851 
+    // +1-416-835-9851
+    // 999-999-9999 
+    // (+1)999-999-9999
+    // (+11)999-999-9999
+    // (+111)999-999-9999
+    // 999-999-9999
+    // (+1)999-999-9999
+    // (+11)999-999-9999
+    // (+111)999-999-9999/000
+    // 999-999-9999 
+    // (+1)999-999-9999
+    // (+11)999-999-9999
+    // (+111)999-999-9999
+    // 123 416 835 9851
 
     ValidateInput("fullName", fullNamePattern, "Please enter a valid full name which means a capitalized first name and capitalized last name.")
     ValidateInput("emailAddress", emailAddressPattern, "Please enter a valid email address.")
@@ -275,6 +280,14 @@
     console.log("References Page");
   }
 
+  function DisplayLoginPage() {
+    console.log("References Page");
+  }
+
+  function DisplayRegisterPage() {
+    console.log("References Page");
+  }
+
   function DisplayServices() {
     console.log("Services Page");
   }
@@ -285,6 +298,7 @@
     switch (document.title) {
       case "Home - WEBD6201 Demo":
         DisplayHome()
+        DisplayNavBar()
         break;
       case "About - WEBD6201 Demo":
         DisplayAbout()
@@ -306,6 +320,12 @@
         break;
       case "Edit - WEBD6201 Demo":
         DisplayEditPage()
+        break;
+      case "Login - WEBD6201 Demo":
+        DisplayLoginPage()
+        break;
+      case "Register - WEBD6201 Demo":
+        DisplayRegisterPage()
         break;
       default:
       // code block
