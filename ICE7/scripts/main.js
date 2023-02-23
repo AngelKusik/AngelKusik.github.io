@@ -146,7 +146,37 @@
     }
   }
 
+  function TestFullName(){
+    let messageArea = $("#messageArea").hide()
+
+    let fullNamePattern = /^([A-Z][a-z]{1,25})((\s|,|-)([A-Z][a-z]{1,25}))*(\s|-|,)*([A-Z][a-z]{1,25})*$/g
+    //((\s))- something between first and second part, a space, comma, whatever it is
+
+    //when I am trying to focus away / move away
+    $("#fullName").on("blur", function() {
+      let fullNameText = $(this).val()
+
+      //failure to match regex expression
+      if(!fullNamePattern.test(fullNameText)){
+        $(this).trigger("focus").trigger("select")
+        
+        messageArea.addClass("alert alert-danger")
+        messageArea.text("Please enter a valid Full Name which means a capitalized first name and capitalized last name.")
+        messageArea.show()
+      }else {
+        //if full name matches regular expression (is valid)
+
+        messageArea.removeAttr("class")
+        messageArea.hide()
+
+      }
+
+    })
+  }
+
   function DisplayContacts() {
+
+    TestFullName()
 
     let submitButton = document.getElementById("submitButton")
     let subscribeCheckbox = document.getElementById("subscribeCheckbox")
@@ -169,6 +199,8 @@
         AddContact(fullName.value, contactNumber.value, emailAddress.value)
       }
     })
+
+
 
   }
 
