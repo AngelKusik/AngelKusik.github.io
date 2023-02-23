@@ -146,37 +146,38 @@
     }
   }
 
-  function TestFullName(){
+  function ValidateInput(inputFieldId, regularExpression, exception){
     let messageArea = $("#messageArea").hide()
 
-    let fullNamePattern = /^([A-Z][a-z]{1,25})((\s|,|-)([A-Z][a-z]{1,25}))*(\s|-|,)*([A-Z][a-z]{1,25})*$/g
-    //((\s))- something between first and second part, a space, comma, whatever it is
-
-    //when I am trying to focus away / move away
-    $("#fullName").on("blur", function() {
-      let fullNameText = $(this).val()
+    $("#" + inputFieldId).on("blur", function() {
+      let inputText = $(this).val()
 
       //failure to match regex expression
-      if(!fullNamePattern.test(fullNameText)){
+      if(!regularExpression.test(inputText)){
         $(this).trigger("focus").trigger("select")
         
-        messageArea.addClass("alert alert-danger")
-        messageArea.text("Please enter a valid Full Name which means a capitalized first name and capitalized last name.")
-        messageArea.show()
+        messageArea.addClass("alert alert-danger").text(exception).show()
       }else {
-        //if full name matches regular expression (is valid)
-
-        messageArea.removeAttr("class")
-        messageArea.hide()
-
+        //success in matching regex
+        messageArea.removeAttr("class").hide()
       }
-
     })
+  }
+
+  function ContactFormValidate(){
+    let emailAddressPattern =  /^[\w-\.]+@([\w-]+\.)+[\w-][^\D]{1,10}$/g
+    let fullNamePattern =  /^([A-Z][a-z]{1,25})((\s|,|-)([A-Z][a-z]{1,}))*(\s|,|-)*([A-Z][a-z]{1,})*$/g
+    let contactNumberPattern = 
+
+    ValidateInput("fullName", fullNamePattern, "Please enter a valid full name which means a capitalized first name and capitalized last name.")
+    ValidateInput("emailAddress", emailAddressPattern, "Please enter a valid email address.")
+    ValidateInput("contactNumber", contactNumberPattern, "Please enter a valid contact number.")
+
   }
 
   function DisplayContacts() {
 
-    TestFullName()
+    ContactFormValidate()
 
     let submitButton = document.getElementById("submitButton")
     let subscribeCheckbox = document.getElementById("subscribeCheckbox")
@@ -205,6 +206,9 @@
   }
 
   function DisplayEditPage(){
+
+    ContactFormValidate()
+
     //get the hash on the url
     //console.log(location.hash)
 
