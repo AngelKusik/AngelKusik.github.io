@@ -51,6 +51,7 @@
     
     $("#navigationBar").html(html_data)
     $(`li>a:contains(${ document.title })`).addClass('active')
+    CheckLogin()
 
   }
 
@@ -77,6 +78,7 @@
   }
 
   function DisplayAbout() {
+
     console.log("About Page");
   }
 
@@ -304,9 +306,83 @@
   }
 
   function DisplayLoginPage() {
-    console.log("References Page");
+
+    console.log("Login Page");
+
+    let messageArea = $('#messageArea')
+    
+    messageArea.hide()
+
+    $('#loginButton').on('click', function(){
+      let success = false // flag indicating if a user is successfully logged in
+
+      // create an empty user object
+      let newUser = new core.User()
+
+      // Use Jquery to load users.json file and read over it
+      $.get('./Data/users.json', function(data){
+        // iterate over every user in the users.json file ... for loop
+
+        for (const user of data.users){
+          // check if the username and password match the user data
+          //passed in from users.json
+          if(username.value == user.Username && password.value == user.Password) {
+            newUser.fromJSON(user)
+
+            success = true
+            break
+
+          }
+        }
+
+        // if username and password matched (success = true) -> perform the login sequence
+      if (success){
+        // add user to sessionStorage
+        sessionStorage.setItem('user', newUser.serialize())
+
+        // hide any error messages
+        messageArea.removeAttr('class').hide()
+
+        // redirect the user to the secure area of our website - contact-list.html
+        location.href = 'contact-list.html'
+
+
+      }else{
+        // display the error message
+        $('#username').trigger('focus').trigger('select')
+        messageArea.addClass('alert alert-danger').text('Error: invalid login credentials: Username/Password Mismacth').show()
+      }
+
+      })
+
+    })
+
+    $('#cancelButton').on('click', function() {
+      // clear the form
+      document.form[0].reset()
+
+      // return to the home page
+      location.href = 'index.html'
+    })
   }
 
+  function CheckLogin() {
+    if(sessionStorage.getItem("user")){
+      // Switch the login button
+      $('#login').html(
+        `<a id="logout" class="nav-link" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>`
+      )
+
+      $('#logout').on('click', function() {
+        //perform Logout
+        sessionStorage.clear()
+
+        // redirect to login.html
+        location.href = 'login.html'
+      })
+    }
+  }
+ 
   function DisplayRegisterPage() {
     console.log("References Page");
   }
