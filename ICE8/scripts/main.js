@@ -8,7 +8,14 @@
 
 (function () {
 
-  function DisplayNavBar(){
+  /**
+   * This function uses Ajax to open a connection to the server
+   * and returns a data payload to the callback function.
+   * @param {string} method 
+   * @param {string} url 
+   * @param {function} callback 
+   */
+  function AjaxRequest(method, url, callback){
     // Week 7 - AJAX
     // Instantiate the XHR Object
     let XHR = new XMLHttpRequest()
@@ -17,19 +24,33 @@
     XHR.addEventListener("readystatechange", () => {
       // if the page is absolutelly ready
       if (XHR.readyState === 4 && XHR.status === 200){
-        //console.log(XHR.responseText)
-
-        $("#navigationBar").html(XHR.responseText)
+        if (typeof callback === 'function'){
+          // the responseText is the navbar 
+          callback(XHR.responseText)
+        }else{
+          console.error("ERROR: callback is not a function.");
+        }
       }
       
     })
 
     // receive the repsonse, connect and get data
     // Important: here we use relative path, because even the code is on main, we are calling it from the index or the other page
-    XHR.open("GET", "./static/header.html")
+    XHR.open(method, url)
 
     // send the request to server to await response
     XHR.send()
+
+  }
+
+  /**
+   * Load the static header
+   * @param {HTML} html_data 
+   */
+  function LoadHeader(html_data){
+    
+    $("#navigationBar").html(html_data)
+    $(`li>a:contains(${ document.title })`).addClass('active')
 
   }
 
@@ -46,6 +67,8 @@
     let secondString = `${firstString} main paragraph that we added to the page using JQuery`
 
     $("main").addClass("container").append(`<p id="mainParagraph" class="mt-3 mb-5 container"> ${secondString} </p>`)    
+    
+    
   }
 
   function DisplayProjects() {
@@ -295,36 +318,38 @@
   function Start() {
     console.log("App Started Successfully")
 
+    // Notice we are passing a reference to LoadHeader no the actual function
+    AjaxRequest("GET", "./static/header.html", LoadHeader)
+
     switch (document.title) {
-      case "Home - WEBD6201 Demo":
+      case "Home":
         DisplayHome()
-        DisplayNavBar()
         break;
-      case "About - WEBD6201 Demo":
+      case "About":
         DisplayAbout()
         break;
-      case "Contact List - WEBD6201 Demo":
+      case "Contact List":
         DisplayContactList()
         break;
-      case "Contact Us - WEBD6201 Demo":
+      case "Contact Us":
         DisplayContacts()
         break;
-      case "Projects - WEBD6201 Demo":
+      case "Projects":
         DisplayProjects()
         break;
-      case "References - WEBD6201 Demo":
+      case "References":
         DisplayReferences()
         break;
-      case "Services - WEBD6201 Demo":
+      case "Services":
         DisplayServices()
         break;
-      case "Edit - WEBD6201 Demo":
+      case "Edit":
         DisplayEditPage()
         break;
-      case "Login - WEBD6201 Demo":
+      case "Login":
         DisplayLoginPage()
         break;
-      case "Register - WEBD6201 Demo":
+      case "Register":
         DisplayRegisterPage()
         break;
       default:
