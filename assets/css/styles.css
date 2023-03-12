@@ -186,7 +186,9 @@ ul, ol {
     padding: 5%;
 }
 
-
+.btn-warning {
+    font-weight: 500 !important;
+}
 
 .light-pink-btn {
     background-color: var(--secondary-color) !important;
@@ -194,7 +196,7 @@ ul, ol {
     font-weight: 500;
 }
 
-.light-pink-btn:hover {
+.light-pink-btn:hover, .btn-warning:hover {
     font-size: 20px;
     cursor: pointer;
     box-shadow: 0 3px 10px var(--tertiary-color);
@@ -232,7 +234,7 @@ ul, ol {
     cursor: pointer;
 }
 
-.bi:hover {
+.bi-github:hover, .bi-linkedin:hover {
     font-size: 45px;
 }
 
