@@ -207,6 +207,22 @@
 
   function DisplayContacts() {
 
+    // Ice 8 - only display Show Contact List if user is logged in
+    // Step 1 - Check if user has a session:
+    if(sessionStorage.getItem("user")){
+      // if user is logged in:
+
+      //Get form element from the page
+      let form = $("#contactForm")
+
+      // Append the showContactList  after the form
+      form.after("<div class='col-lg-4 col-md-4'>" 
+                + "<a href='./contact-list.html' class='btn btn-primary btn-lg'>"
+                + "<i class='fas fa-users fa-lg'></i>Show Contact List"
+                + "</a></div>")
+    }
+    // Step 2 - If user is not logged in, don't show the button! :)
+
     ContactFormValidate()
 
     let submitButton = document.getElementById("submitButton")
