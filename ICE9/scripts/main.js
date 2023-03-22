@@ -12,7 +12,7 @@
    * This function uses Ajax to open a connection to the server
    * and returns a data payload to the callback function.
    * @param {string} method 
-   * @param {string} url 
+   * @param {string} url  
    * @param {function} callback 
    */
   function AjaxRequest(method, url, callback){
@@ -48,10 +48,46 @@
    * @param {HTML} html_data 
    */
   function LoadHeader(html_data){
-    
-    $("#navigationBar").html(html_data)
-    $(`li>a:contains(${ document.title })`).addClass('active')
+
+    $.get('./Views/Components/header.html', function(html_data) {
+
+      $("#navigationBar").html(html_data)
+
+      // here we are trying to get 0 and 1 but we are not including 2, making it upper case and then getting the rest
+      document.title = router.ActiveLink.substring(0,2).toUpperCase() + router.ActiveLink.substring(2)
+      $(`li>a:contains(${ document.title })`).addClass('active') // we are no longer getting the title from the header title like before
+
+    })
+
     CheckLogin()
+
+  }
+  /**
+   * This function loads content
+   * @returns {void}
+   */
+  function LoadContent() {
+
+    let pageName = router.ActiveLink
+    $.get(`./Views/Content/${ pageName }.html`, function(html_data) {
+      $('main').html(html_data)
+
+      ActiveLinkCallBack() // we need to load the correct function to load the functionality we have set up for each page
+    })
+
+  }
+
+  /**
+   * This function loads footer
+   * @returns {void}
+   */
+  function LoadFooter() {
+
+    $.get('./Views/Components/footer.html', function(html_data) {
+
+      $('footer').html(html_data)
+
+    })
 
   }
 
@@ -60,7 +96,7 @@
 
     //Most amount of memory heap
     $("#randomButton").on("click", function () {
-      window.location.href = "contact.html";
+      window.location.href = "/contact";
     })
 
 
@@ -123,20 +159,20 @@
           localStorage.removeItem($(this).val())
         
         //location.reload()
-        location.href = 'contact-list.com'
+        location.href = '/contact-list'
       })
 
       $("button.edit").on("click",function () {
         //console.log("Edit button was clicked")
         //pass in the edit page url and the key value that we are getting from the button
-        window.location.href = 'edit.html#' + $(this).val()
+        window.location.href = '/edit#' + $(this).val()
       })
 
     }
 
     //function for add button
     $("#addButton").on("click", () => {
-      location.href = 'edit.html#Add'
+      location.href = '/edit#Add'
     })
 
   }
@@ -217,7 +253,7 @@
 
       // Append the showContactList  after the form
       form.after("<div class='col-lg-4 col-md-4'>" 
-                + "<a href='./contact-list.html' class='btn btn-primary btn-lg'>"
+                + "<a href='/contact-list' class='btn btn-primary btn-lg'>"
                 + "<i class='fas fa-users fa-lg'></i>Show Contact List"
                 + "</a></div>")
     }
@@ -275,7 +311,7 @@
             AddContact(fullName.value, contactNumber.value, emailAddress.value)
 
             //redirect to contact list
-            location.href = "contact-list.html"
+            location.href = "/contact-list"
           })
         }
         break;
@@ -305,7 +341,7 @@
             localStorage.setItem(page, contact.serialize()) //transform the contact info into a string separated by commas
 
             //go back to contactlist.html
-            location.href = 'contact-list.html'
+            location.href = '/contact-list'
 
           })
 
@@ -360,7 +396,7 @@
         messageArea.removeAttr('class').hide()
 
         // redirect the user to the secure area of our website - contact-list.html
-        location.href = 'contact-list.html'
+        location.href = '/contact-list'
 
 
       }else{
@@ -378,7 +414,7 @@
       document.form[0].reset()
 
       // return to the home page
-      location.href = 'index.html'
+      location.href = '/index'
     })
   }
 
@@ -394,7 +430,7 @@
         sessionStorage.clear()
 
         // redirect to login.html
-        location.href = 'login.html'
+        location.href = '/login'
       })
     }
   }
@@ -407,13 +443,44 @@
     console.log("Services Page");
   }
 
+  function Display404Page() {
+    console.log('404 Page');
+  }
+  /**
+   * @returns {function}
+   */
+  function ActiveLinkCallBack() {
+
+    console.log(`ActiveLinkCallBack - ${ router.ActiveLink }`)
+    switch (router.ActiveLink) {
+      case "home": return DisplayHome()
+      case "projects": return DisplayProjects()
+      case "contact": return DisplayContacts()
+      case "contact-list": return DisplayContactList()
+      case "references": return DisplayReferences()
+      case "login": return DisplayLoginPage()
+      case "register": return DisplayRegisterPage()
+      case "404": return Display404Page()
+      default:
+        console.error(`Error: Callback does not Exist... ${ router.ActiveLink }`);
+    }
+
+  }
+
   function Start() {
     console.log("App Started Successfully")
 
     // Notice we are passing a reference to LoadHeader no the actual function
-    AjaxRequest("GET", "./static/header.html", LoadHeader)
+    //AjaxRequest("GET", "./static/header.html", LoadHeader)
+    LoadHeader()
 
-    switch (document.title) {
+    LoadContent()  // Ajax dinamically passes the data everywhere, so data binding is usually not an issue
+
+    LoadFooter()
+
+    // shift + alt + A - to block comment :)
+
+/*     switch (document.title) {
       case "Home":
         DisplayHome()
         break;
@@ -446,7 +513,7 @@
         break;
       default:
       // code block
-    }
+    } */
   }
 
   window.addEventListener("load", Start)
