@@ -101,6 +101,7 @@ router.AddRoutingTable([
     "/edit"                     // edit page route
 ])
 
+// window.history.pushState('', '', '/')
 let route = location.pathname   // alias for location.pathname 
                                 // returns the location url path
 
