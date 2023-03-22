@@ -69,6 +69,7 @@
   function LoadContent() {
 
     let pageName = router.ActiveLink
+    console.log(pageName)
     $.get(`./Views/Content/${ pageName }.html`, function(html_data) {
       $('main').html(html_data)
 
