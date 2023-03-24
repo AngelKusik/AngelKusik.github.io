@@ -41,7 +41,7 @@
             if(this.Name !== "" && this.ContactNumber !== "" && this.EmailAddress !== "")
                 return `${ this.Name }, ${ this.ContactNumber }, ${ this.EmailAddress } `
             
-            console.error("One or more properties pr fields of the contact object are missing or invalid")
+            console.error("One or more properties per fields of the contact object are missing or invalid")
             return null
         }
 

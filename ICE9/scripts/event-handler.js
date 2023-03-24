@@ -43,33 +43,6 @@ var passDisplay = document.getElementById("passDisplay");
 // }
 
 function validateForm() {
-    let name = document.forms["contactForm"]["userName"].value;
-    let phoneNumber = document.forms["contactForm"]["#phoneNumber"].value;
-    let email = document.forms["contactForm"]["#emailAddress"].value;
-    let Password = document.forms["contactForm"]["#password"].value;
-    
-    var isValid;
-
-    if (name == "") {
-        alert("Name must be filled out");
-        console.log("An error occurred: Name must be filled out")
-        isValid = false;
-    } else {
-        console.log(`Username: ${ x } \n Password: ${ y }`)
-        return false;
-    }
-
-    if (phoneNumber == "") {
-        alert("Name must be filled out");
-        console.log("An error occurred: Name must be filled out")
-        isValid = false;
-    } else {
-        console.log(`Username: ${ x } \n Password: ${ y }`)
-        return false;
-    }
-}
-
-function validateForm() {
     let x = document.forms["contactForm"]["userName"].value;
     let y = document.forms["myForm"]["password"].value;
     if (x == "") {
@@ -77,8 +50,8 @@ function validateForm() {
         return false;
     } else {
         console.log(`Username: ${ x } \n Password: ${ y }`)
-        //userDisplay.textContent = x; userDisplay.textContext = x; -> the second one here was my original line and it didn't work until I replaced it ??????
-        //passDisplay.textContent = y;
+        userDisplay.textContent = x; userDisplay.textContext = x; //-> the second one here was my original line and it didn't work until I replaced it ??????
+        passDisplay.textContent = y;
         return false;
     }
 }

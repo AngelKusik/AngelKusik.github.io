@@ -50,9 +50,7 @@
   function LoadHeader(html_data){
 
     $.get('./Views/Components/header.html', function(html_data) {
-
       $("#navigationBar").html(html_data)
-
       // here we are trying to get 0 and 1 but we are not including 2, making it upper case and then getting the rest
       document.title = router.ActiveLink.substring(0,2).toUpperCase() + router.ActiveLink.substring(2)
       $(`li>a:contains(${ document.title })`).addClass('active') // we are no longer getting the title from the header title like before
@@ -351,7 +349,6 @@
         break
     }
 
-
   }
 
   function DisplayReferences() {
@@ -459,8 +456,11 @@
       case "contact": return DisplayContacts()
       case "contact-list": return DisplayContactList()
       case "references": return DisplayReferences()
+      case "edit": return DisplayEditPage()
       case "login": return DisplayLoginPage()
       case "register": return DisplayRegisterPage()
+      case "about": return DisplayAbout()
+      case "about": return DisplayServices()
       case "404": return Display404Page()
       default:
         console.error(`Error: Callback does not Exist... ${ router.ActiveLink }`);

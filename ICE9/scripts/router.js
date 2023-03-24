@@ -63,6 +63,8 @@
             // if route is found, if not this is going to return -1 for "not found"
             if (this.Find(route) > -1){
                 // remove the route
+                // splice: takes the area that we want to splice/remove which is the slash in this case
+                // the 1 stand to the number of elements we want to remove
                 this.m_routingTable.splice(this.Find(route), 1)
                 return true
             }
