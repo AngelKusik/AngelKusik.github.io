@@ -91,7 +91,8 @@
 let router = new core.Router() // associating the router with the namespace core so router will be accessible anywhere in the application
 
 router.AddRoutingTable([
-    "/",                        // default route
+    "/",      
+    "/ICE9/",                   // default route
     "/home",                    // home page route
     "/about",                   // about page route
     "/services",                // services page route
