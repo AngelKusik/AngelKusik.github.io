@@ -57,9 +57,9 @@
       document.title = router.ActiveLink.substring(0,2).toUpperCase() + router.ActiveLink.substring(2)
       $(`li>a:contains(${ document.title })`).addClass('active') // we are no longer getting the title from the header title like before
 
-    })
+      CheckLogin()
 
-    CheckLogin()
+    })
 
     return new Function()
 
@@ -95,7 +95,6 @@
     })
 
     return new Function()
-
   }
 
   function DisplayHome(): Function {
@@ -167,13 +166,15 @@
           //console.log("delete button was clicked")
           localStorage.removeItem($(this).val() as string)
 
-        location.href = '/contact-list'
+        //location.href = '/contact-list'
+        LoadLink('contact-list')
       })
 
       $("button.edit").on("click",function () {
         //console.log("Edit button was clicked")
         //pass in the edit page url and the key value that we are getting from the button
-        window.location.href = '/edit#' + $(this).val()
+        //window.location.href = '/edit#' + $(this).val()
+        LoadLink('edit', $(this).val() as string)
       })
 
     }
@@ -181,6 +182,7 @@
     //function for add button
     $("#addButton").on("click", () => {
       location.href = '/edit#Add'
+      LoadLink('edit', $(this).val() as string)
     })
 
     return new Function()
@@ -226,24 +228,6 @@
     let emailAddressPattern =  /^[\w-\.]+@([\w-]+\.)+[\w-][^\D]{1,10}$/g
     let fullNamePattern =  /^([A-Z][a-z]{1,25})((\s|,|-)([A-Z][a-z]{1,}))*(\s|,|-)*([A-Z][a-z]{1,})*$/g
     let contactNumberPattern = /^(\()?(\+)?(\d{0,3})?(\s|-|\))?(\d{3,})(\s|-)?(\d{3,})(\s|-)?(\d{4,})$/g
-    
-    // The contactNumber Regex below accepts the following:
-    // +123 416 835 9851
-    // 4168359851 
-    // +1-416-835-9851
-    // 999-999-9999 
-    // (+1)999-999-9999
-    // (+11)999-999-9999
-    // (+111)999-999-9999
-    // 999-999-9999
-    // (+1)999-999-9999
-    // (+11)999-999-9999
-    // (+111)999-999-9999/000
-    // 999-999-9999 
-    // (+1)999-999-9999
-    // (+11)999-999-9999
-    // (+111)999-999-9999
-    // 123 416 835 9851
 
     ValidateInput("fullName", fullNamePattern, "Please enter a valid full name which means a capitalized first name and capitalized last name.")
     ValidateInput("emailAddress", emailAddressPattern, "Please enter a valid email address.")
@@ -274,25 +258,6 @@
     let submitButton = document.getElementById("submitButton") as HTMLElement
     let subscribeCheckbox = document.getElementById("subscribeCheckbox") as HTMLInputElement
 
-    //Session Storage: Temporary storage on the browser
-    //localStorage: Key working pairs
-    //Both located under the Application tab of the developer tools 
-    //remember when retrieving data from the local storage that variable names are case sensitive
-
-    //localStorage Example
-    // localStorage.setItem("Random Variable", "random variable for testing")
-    // console.log(localStorage.getItem("Random Variable"))
-    // localStorage.removeItem("Random Variable")
-
-    // submitButton.addEventListener("click", function () {
-    //   //event.preventDefault()
-    //   if (subscribeCheckbox.checked) {
-    //     //only if user subscribe we want to save the data on the database
-    //     //the parameters are the ids that we are suing on the form.
-    //     AddContact(fullName.value, contactNumber.value, emailAddress.value)
-    //   }
-    // })
-
     submitButton.addEventListener("click", function() {
       if (subscribeCheckbox.checked) {
           let fullName = document.forms[0].fullName.value
@@ -317,11 +282,10 @@
 
     ContactFormValidate()
 
-    //get the hash on the url
-    //console.log(location.hash)
-
     //assign the word after the hash symbol and assign it to a variable
     let page = location.hash.substring(1)
+
+    //let page = router.LinkData
 
     switch (page) {
       case "Add":
@@ -338,10 +302,11 @@
             let emailAddress = document.forms[0].emailAddress.value
 
             //get the form info (name ,contact number, email address)
-            AddContact(fullName.value, contactNumber.value, emailAddress.value)
+            AddContact(fullName, contactNumber, emailAddress)
 
             //redirect to contact list
             location.href = "/contact-list"
+            //LoadLink('contact-list')
           })
         }
         break;
@@ -372,7 +337,13 @@
 
             //go back to contactlist.html
             location.href = '/contact-list'
+            // LoadLink('contact-list')
 
+          })
+
+          $("#resetButton").on("click", () => {
+            location.href = '/contact-list'
+            //LoadLink('contact-list')
           })
 
         }
@@ -396,6 +367,8 @@
     let messageArea = $('#messageArea')
     
     messageArea.hide()
+
+    //AddLinkEvents('register')
 
     $('#loginButton').on('click', function(){
       let success = false // flag indicating if a user is successfully logged in
@@ -432,7 +405,7 @@
 
         // redirect the user to the secure area of our website - contact-list.html
         location.href = '/contact-list'
-
+        //LoadLink('contact-list')
 
       }else{
         // display the error message
@@ -450,6 +423,7 @@
 
       // return to the home page
       location.href = '/home'
+      //LoadLink('home')
     })
 
     return new Function()
@@ -466,8 +440,17 @@
         //perform Logout
         sessionStorage.clear()
 
+        // switch logout link to login link
+        $('#login').html(
+          `<a class="nav-link" data="login"><i class="fas fa-sign-in-alt"></i> Login</a>`
+        )
+
+        //AddNavigationEvents()
+
         // redirect to login.html
         location.href = '/login'
+        //LoadLink('login')
+
       })
     }
   }
@@ -503,6 +486,7 @@
       case "references": return DisplayReferences()
       case "login": return DisplayLoginPage()
       case "edit": return DisplayEditPage()
+      case "services": return DisplayServices()
       case "register": return DisplayRegisterPage()
       case "404": return Display404Page()
       default:
@@ -515,50 +499,12 @@
   function Start() {
     console.log("App Started Successfully")
 
-    // Notice we are passing a reference to LoadHeader no the actual function
-    //AjaxRequest("GET", "./static/header.html", LoadHeader)
     LoadHeader()
 
     LoadContent()  // Ajax dinamically passes the data everywhere, so data binding is usually not an issue
+    // LoadLink("home")
 
     LoadFooter()
-
-    // shift + alt + A - to block comment :)
-
-/*     switch (document.title) {
-      case "Home":
-        DisplayHome()
-        break;
-      case "About":
-        DisplayAbout()
-        break;
-      case "Contact List":
-        DisplayContactList()
-        break;
-      case "Contact Us":
-        DisplayContacts()
-        break;
-      case "Projects":
-        DisplayProjects()
-        break;
-      case "References":
-        DisplayReferences()
-        break;
-      case "Services":
-        DisplayServices()
-        break;
-      case "Edit":
-        DisplayEditPage()
-        break;
-      case "Login":
-        DisplayLoginPage()
-        break;
-      case "Register":
-        DisplayRegisterPage()
-        break;
-      default:
-      // code block
-    } */
   }
 
   window.addEventListener("load", Start)

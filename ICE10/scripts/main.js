@@ -20,8 +20,8 @@
             $("#navigationBar").html(html_data);
             document.title = router.ActiveLink.substring(0, 2).toUpperCase() + router.ActiveLink.substring(2);
             $(`li>a:contains(${document.title})`).addClass('active');
+            CheckLogin();
         });
-        CheckLogin();
         return new Function();
     }
     function LoadContent() {
@@ -83,14 +83,15 @@
             $("button.delete").on("click", function () {
                 if (confirm("Are you sure you want to delete this?"))
                     localStorage.removeItem($(this).val());
-                location.href = '/contact-list';
+                LoadLink('contact-list');
             });
             $("button.edit").on("click", function () {
-                window.location.href = '/edit#' + $(this).val();
+                LoadLink('edit', $(this).val());
             });
         }
         $("#addButton").on("click", () => {
             location.href = '/edit#Add';
+            LoadLink('edit', $(this).val());
         });
         return new Function();
     }
@@ -160,7 +161,7 @@
                         let fullName = document.forms[0].fullName.value;
                         let contactNumber = document.forms[0].contactNumber.value;
                         let emailAddress = document.forms[0].emailAddress.value;
-                        AddContact(fullName.value, contactNumber.value, emailAddress.value);
+                        AddContact(fullName, contactNumber, emailAddress);
                         location.href = "/contact-list";
                     });
                 }
@@ -178,6 +179,9 @@
                         contact.ContactNumber = $("#contactNumber").val();
                         contact.EmailAddress = $("#emailAddress").val();
                         localStorage.setItem(page, contact.serialize());
+                        location.href = '/contact-list';
+                    });
+                    $("#resetButton").on("click", () => {
                         location.href = '/contact-list';
                     });
                 }
@@ -228,6 +232,7 @@
             $('#login').html(`<a id="logout" class="nav-link" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>`);
             $('#logout').on('click', function () {
                 sessionStorage.clear();
+                $('#login').html(`<a class="nav-link" data="login"><i class="fas fa-sign-in-alt"></i> Login</a>`);
                 location.href = '/login';
             });
         }
@@ -254,6 +259,7 @@
             case "references": return DisplayReferences();
             case "login": return DisplayLoginPage();
             case "edit": return DisplayEditPage();
+            case "services": return DisplayServices();
             case "register": return DisplayRegisterPage();
             case "404": return Display404Page();
             default:

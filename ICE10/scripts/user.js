@@ -35,34 +35,32 @@ var core;
         toString() {
             return `Display Name: ${this.DisplayName}\nEmail Address: ${this.EmailAddress}\nUsername: ${this.Username}`;
         }
+        toJSON() {
+            return {
+                "DisplayName": this.DisplayName,
+                "EmailAddress": this.EmailAddress,
+                "Username": this.Username
+            };
+        }
+        fromJSON(data) {
+            this.DisplayName = data.DisplayName;
+            this.EmailAddress = data.EmailAddress;
+            this.Username = data.Username;
+            this.Password = data.Password;
+        }
+        serialize() {
+            if (this.DisplayName !== "" && this.EmailAddress !== "" && this.Username !== "")
+                return `${this.DisplayName}, ${this.EmailAddress}, ${this.Username} `;
+            console.error("One or more properties pr fields of the contact object are missing or invalid");
+            return null;
+        }
+        deserialize(data) {
+            let propertyArray = data.split(", ");
+            this.DisplayName = propertyArray[0];
+            this.EmailAddress = propertyArray[1];
+            this.Username = propertyArray[2];
+        }
     }
     core.User = User;
-    return {
-        "DisplayName": this.DisplayName,
-        "EmailAddress": this.EmailAddress,
-        "Username": this.Username
-    };
 })(core || (core = {}));
-fromJSON(data, any);
-void {
-    this: .DisplayName = data.DisplayName,
-    this: .EmailAddress = data.EmailAddress,
-    this: .Username = data.Username,
-    this: .Password = data.Password
-};
-serialize();
-string | null;
-{
-    if (this.DisplayName !== "" && this.EmailAddress !== "" && this.Username !== "")
-        return `${this.DisplayName}, ${this.EmailAddress}, ${this.Username} `;
-    console.error("One or more properties pr fields of the contact object are missing or invalid");
-    return null;
-}
-deserialize(data, string);
-{
-    let propertyArray = data.split(", ");
-    this.DisplayName = propertyArray[0];
-    this.EmailAddress = propertyArray[1];
-    this.Username = propertyArray[2];
-}
 //# sourceMappingURL=user.js.map

@@ -54,8 +54,7 @@ namespace core{
 
         // Utility Methods
         // this doesn't include password because its for console display purposes, not database
-        //FIXME: need to fix the return type
-        toJSON(): ( DisplayName: String, EmailAddress: String, Username: String ) {
+        toJSON(): { DisplayName: String, EmailAddress: String, Username: String } {
             return {
                 "DisplayName": this.DisplayName,
                 "EmailAddress": this.EmailAddress,
@@ -63,8 +62,7 @@ namespace core{
             }
         }
 
-        // FIXME: fix parameter fata type
-        fromJSON(data: any): void{
+        fromJSON(data: User): void{
             this.DisplayName = data.DisplayName
             this.EmailAddress = data.EmailAddress
             this.Username = data.Username
