@@ -91,8 +91,6 @@
   }
 
   function DisplayHome() {
-
-
     //Most amount of memory heap
     $("#randomButton").on("click", function () {
       window.location.href = "/contact";
@@ -103,8 +101,6 @@
     let secondString = `${firstString} main paragraph that we added to the page using JQuery`
 
     $("main").addClass("container").append(`<p id="mainParagraph" class="mt-3 mb-5 container"> ${secondString} </p>`)    
-    
-    
   }
 
   function DisplayProjects() {
