@@ -8,8 +8,15 @@ var core;
         set ActiveLink(link) {
             this.m_activeLink = link;
         }
+        get LinkData() {
+            return this.m_linkData;
+        }
+        set LinkData(data) {
+            this.m_linkData = data;
+        }
         constructor() {
             this.m_activeLink = "";
+            this.m_linkData = "";
             this.m_routingTable = [];
         }
         Add(route) {

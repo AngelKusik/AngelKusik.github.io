@@ -8,40 +8,93 @@
 
 (function () {
 
-  /**
-   * This function uses Ajax to open a connection to the server
-   * and returns a data payload to the callback function.
-   * @param {string} method 
-   * @param {string} url  
-   * @param {Function} callback 
-   */
-  function AjaxRequest(method: string, url: string, callback: Function){
-    // Week 7 - AJAX
-    // Instantiate the XHR Object
-    let XHR = new XMLHttpRequest()
+  function AuthGuard(): void {
+    let protectedRoutes: string[] = [
+      'contact-list' // this is the protected route that we are going to use
+    ]
 
-    // add event listener for readystatechange (there are 5 of them - 0-5, 0 meaning it's not ready)
-    XHR.addEventListener("readystatechange", () => {
-      // if the page is absolutelly ready
-      if (XHR.readyState === 4 && XHR.status === 200){
-        if (typeof callback === 'function'){
-          // the responseText is the navbar 
-          callback(XHR.responseText)
-        }else{
-          console.error("ERROR: callback is not a function.");
+    if (protectedRoutes.indexOf(router.ActiveLink) > -1){
+        // check if user is logged in
+        if (!sessionStorage.getItem("user")){
+            // redirect the user to login.html
+            router.ActiveLink = 'login'
         }
-      }
-      
+    } 
+  }
+
+  function LoadLink(link: string, data: string = ""): void  {
+    router.ActiveLink = link
+
+    AuthGuard() // we are calling this here to check if the user is logged in for security
+
+    router.LinkData = data
+    
+    history.pushState({}, "", router.ActiveLink)
+
+    // here we are trying to get 0 and 1 but we are not including 2, making it upper case and then getting the rest
+    document.title = router.ActiveLink.substring(0,1).toUpperCase() + router.ActiveLink.substring(1)
+
+    // remove all active links
+    $('ul>li>a').each(function() {
+      $(this).removeClass('active')
     })
 
-    // receive the repsonse, connect and get data
-    // Important: here we use relative path, because even the code is on main, we are calling it from the index or the other page
-    XHR.open(method, url)
+    $(`li>a:contains(${ document.title })`).addClass('active') // we are no longer getting the title from the header title like before
 
-    // send the request to server to await response
-    XHR.send()
+    // everytime we click a link we want to load the data/page associated with it
+    LoadContent()  
 
   }
+
+  // this is to help the browser handle all the events that will be trigger so it don't freeze
+  function AddNavigationEvents(): void {
+    let navLinks = $('ul>li>a') // get all navigation links
+
+    // remove navigation events
+    navLinks.off('click')
+    navLinks.off('mouseover')
+
+    // loop through each navigation link and load the appropriate content/data on click
+    navLinks.on('click', function() {
+      LoadLink($(this).attr('data') as string)
+    })
+
+    // make the navigation links look clickable
+    navLinks.on('mouseover', function() {
+      $(this).css('cursor', 'pointer')
+    })
+
+  }
+
+  // here we are going to add the events to the click
+  function AddLinkEvents(link: string): void {
+    let linkQuery = $(`a.link[data=${ link }]`)
+
+    // remove all link events to clean the stack
+    linkQuery.off('click')
+    linkQuery.off('mouseover')
+    linkQuery.off('mouseout')
+
+    // add css to adjust the link aesthetics
+    linkQuery.css('text-decoration', 'underline')
+    linkQuery.css('color', 'blue')
+
+    // add link events
+    linkQuery.on('click', function() {
+      LoadLink(`${ link }`)
+    })
+
+    linkQuery.on('mouseover', function() {
+      $(this).css('cursor', 'pointer')
+      $(this).css('font-weight', 'bold')
+    })
+
+    linkQuery.on('mouseout', function() {
+      $(this).css('font-weight', 'normal')
+    })
+
+  }
+
 
   /**
    * Load the static header
@@ -53,9 +106,7 @@
 
       $("#navigationBar").html(html_data)
 
-      // here we are trying to get 0 and 1 but we are not including 2, making it upper case and then getting the rest
-      document.title = router.ActiveLink.substring(0,2).toUpperCase() + router.ActiveLink.substring(2)
-      $(`li>a:contains(${ document.title })`).addClass('active') // we are no longer getting the title from the header title like before
+      AddNavigationEvents()
 
       CheckLogin()
 
@@ -74,6 +125,8 @@
     console.log(pageName)
     $.get(`./Views/Content/${ pageName }.html`, function(html_data) {
       $('main').html(html_data)
+
+      CheckLogin()
 
       ActiveLinkCallBack() // we need to load the correct function to load the functionality we have set up for each page
     })
@@ -121,9 +174,11 @@
 
   }
 
-  function DisplayAbout() {
+  function DisplayAbout(): Function {
 
     console.log("About Page");
+
+    return new Function()
   }
 
   function DisplayContactList(): Function  {
@@ -181,8 +236,8 @@
 
     //function for add button
     $("#addButton").on("click", () => {
-      location.href = '/edit#Add'
-      LoadLink('edit', $(this).val() as string)
+      //location.href = '/edit#Add'
+      LoadLink('edit', 'Add')
     })
 
     return new Function()
@@ -237,6 +292,11 @@
 
   function DisplayContacts(): Function {
 
+    $('a[data="contact-list"]').off('click')
+    $('a[data="contact-list"]').on('click', function() {
+      LoadLink('contact-list')
+    })
+
     // Ice 8 - only display Show Contact List if user is logged in
     // Step 1 - Check if user has a session:
     if(sessionStorage.getItem("user")){
@@ -283,9 +343,9 @@
     ContactFormValidate()
 
     //assign the word after the hash symbol and assign it to a variable
-    let page = location.hash.substring(1)
+    //let page = location.hash.substring(1)
 
-    //let page = router.LinkData
+    let page = router.LinkData
 
     switch (page) {
       case "Add":
@@ -305,8 +365,8 @@
             AddContact(fullName, contactNumber, emailAddress)
 
             //redirect to contact list
-            location.href = "/contact-list"
-            //LoadLink('contact-list')
+            //location.href = "/contact-list"
+            LoadLink('contact-list')
           })
         }
         break;
@@ -336,14 +396,14 @@
             localStorage.setItem(page, contact.serialize() as string) //transform the contact info into a string separated by commas
 
             //go back to contactlist.html
-            location.href = '/contact-list'
-            // LoadLink('contact-list')
+            //location.href = '/contact-list'
+            LoadLink('contact-list')
 
           })
 
           $("#resetButton").on("click", () => {
-            location.href = '/contact-list'
-            //LoadLink('contact-list')
+            //location.href = '/contact-list'
+            LoadLink('contact-list')
           })
 
         }
@@ -368,7 +428,7 @@
     
     messageArea.hide()
 
-    //AddLinkEvents('register')
+    AddLinkEvents('register')
 
     $('#loginButton').on('click', function(){
       let success = false // flag indicating if a user is successfully logged in
@@ -384,9 +444,12 @@
 
           let username = document.forms[0].username.value
           let password = document.forms[0].password.value
+
+          console.log(username)
+          console.log(password)
           // check if the username and password match the user data
           //passed in from users.json
-          if(username.value == user.Username && password.value == user.Password) {
+          if(username == user.Username && password == user.Password) {
             newUser.fromJSON(user)
 
             success = true
@@ -404,8 +467,8 @@
         messageArea.removeAttr('class').hide()
 
         // redirect the user to the secure area of our website - contact-list.html
-        location.href = '/contact-list'
-        //LoadLink('contact-list')
+        //location.href = '/contact-list'
+        LoadLink('contact-list')
 
       }else{
         // display the error message
@@ -422,8 +485,8 @@
       document.forms[0].reset()
 
       // return to the home page
-      location.href = '/home'
-      //LoadLink('home')
+      //location.href = '/home'
+      LoadLink('home')
     })
 
     return new Function()
@@ -445,11 +508,11 @@
           `<a class="nav-link" data="login"><i class="fas fa-sign-in-alt"></i> Login</a>`
         )
 
-        //AddNavigationEvents()
+        AddNavigationEvents() // to call all the events necessary
 
         // redirect to login.html
-        location.href = '/login'
-        //LoadLink('login')
+        //location.href = '/login'
+        LoadLink('login')
 
       })
     }
@@ -457,6 +520,8 @@
  
   function DisplayRegisterPage(): Function {
     console.log("References Page");
+
+    AddLinkEvents('login')
 
     return new Function()
   }
@@ -488,6 +553,7 @@
       case "edit": return DisplayEditPage()
       case "services": return DisplayServices()
       case "register": return DisplayRegisterPage()
+      case "about": return DisplayAbout()
       case "404": return Display404Page()
       default:
         console.error(`Error: Callback does not Exist... ${ router.ActiveLink }`)
@@ -501,8 +567,8 @@
 
     LoadHeader()
 
-    LoadContent()  // Ajax dinamically passes the data everywhere, so data binding is usually not an issue
-    // LoadLink("home")
+    //LoadContent()  
+    LoadLink("home")
 
     LoadFooter()
   }

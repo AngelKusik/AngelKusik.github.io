@@ -6,6 +6,7 @@ namespace core{
         // private instance variables
         private m_activeLink: string
         private m_routingTable: string[]
+        private m_linkData: string
 
         // public properties: gets and sets
         /**
@@ -23,6 +24,21 @@ namespace core{
             this.m_activeLink = link            
         }
 
+        /**
+         * @returns string
+         */
+        public get LinkData(): string {
+
+            return this.m_linkData // if it doesn't exist, javascript will create it
+        }
+        /**
+         * @params {string} data
+         */
+        public set LinkData(data: string) {
+
+            this.m_linkData = data           
+        }
+
         // constructor
         /**
          * Creates an instance of Router.
@@ -30,8 +46,10 @@ namespace core{
          */
         constructor() {
             this.m_activeLink = ""
+            this.m_linkData = ""
             //this.m_routingTable = new Array<string>() can be done both ways
             this.m_routingTable = []
+
         }
 
         // public methods - paths for methods
