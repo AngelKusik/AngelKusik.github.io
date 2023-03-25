@@ -4,6 +4,7 @@
   "description": "A repository for all Webd in-class demos",
   "main": "index.js",
   "scripts": {
+    "predeploy": "npm install",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lite-server": "lite-server",
     "start": "lite-server -p 3000"
