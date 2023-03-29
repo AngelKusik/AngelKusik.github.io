@@ -12,7 +12,11 @@
         "strictPropertyInitialization": true,
         "noImplicitThis": true,
         "alwaysStrict": true,
-        "noImplicitReturns": true
+        "noImplicitReturns": true,
+        "esModuleInterop": true, // these are the new ones we added for ice11
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "moduleResolution": "node"
 
     },
 
