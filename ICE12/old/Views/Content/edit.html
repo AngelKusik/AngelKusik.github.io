@@ -1,0 +1,31 @@
+<h1 id="welcome" class="mt-5">
+  <i class="fa-solid fa-address-book"></i>
+  Edit Contact
+</h1>
+<div class="container mt-5">
+  <div id="messageArea"></div>
+  <div class="row justify-content-center g-3">
+    <form id="editForm" method="get" name="editForm" class="col-lg-6 col-md-10 col-sm-10">
+      <div class="input-group mb-3">
+        <!--Name-->
+        <span class="input-group-text">Name</span>
+        <input type="text" class="form-control" id="fullName" name="fullName" placeholder="e.g. John Doe">
+      </div>
+      <div class="input-group mb-3">
+        <!--Number-->
+        <span class="input-group-text">Contact Number</span>
+        <input type="text" class="form-control" id="contactNumber" name="contactNumber" placeholder="e.g. 6411234758">
+      </div>
+      <div class="input-group mb-3">
+        <!--Email-->
+        <span class="input-group-text">Email Address</span>
+        <input type="text" class="form-control" id="emailAddress" name="emailAddress"
+          placeholder="e.g. john.doe@example.com">
+      </div>
+      <button type="submit" class="btn btn-primary mt-2" id="editButton"><i class="fas fa-edit fa-lg"></i> Edit</button>
+      <button type="reset" class="btn btn-warning mt-2" id="resetButton"><i class="fas fa-undo fa-lg"></i>
+        Cancel</button>
+    </form>
+
+  </div>
+</div>
