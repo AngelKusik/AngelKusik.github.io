@@ -15,7 +15,7 @@ const normalizePort = (val) => {
         return port;
     return false;
 };
-const port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT || '3011');
 app_1.default.set('port', port);
 const onError = (error) => {
     if (error.syscall !== 'listen')
@@ -37,7 +37,7 @@ const onError = (error) => {
 const onListening = () => {
     let addr = server.address();
     let bind = 'pipe ' + addr;
-    (0, debug_1.default)('listening on ' + bind);
+    (0, debug_1.default)('Listening on ' + bind);
 };
 const server = http_1.default.createServer(app_1.default);
 server.listen(port);

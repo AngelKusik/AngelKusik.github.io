@@ -4,18 +4,18 @@ debug('temp:server')
 import http from 'http'
 import { HttpError } from 'http-errors'
 
-// Normalize part into a number, string, or false
+// Normalize port into a number, string, or false
 const normalizePort = (val: string) => {
     const port = parseInt(val, 10)
 
-    if (isNaN(port)) return val   // if it is not a number - returns true or false
+    if (isNaN(port)) return val
 
-    if (port >= 0) return port 
+    if (port >= 0) return port
 
     return false
 }
 
-const port = normalizePort(process.env.PORT || '3000') as number
+const port = normalizePort(process.env.PORT || '3011') as number
 app.set('port', port)
 
 // Event listening for HTTP server 'error' event
@@ -24,7 +24,7 @@ const onError = (error: HttpError) => {
 
     const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port
 
-    // Handle specific listen errors with custom messages
+    // handle specific listen errors with custom messages
     switch(error.code) {
         case 'EACCES':
             console.error(bind + ' requires elevated privileges');
@@ -39,11 +39,11 @@ const onError = (error: HttpError) => {
     }
 }
 
-// Listener
+// listener
 const onListening = () => {
     let addr = server.address()
     let bind = 'pipe ' + addr
-    debug('listening on ' + bind)
+    debug('Listening on ' + bind)
 }
 
 // Start our server

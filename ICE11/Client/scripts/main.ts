@@ -10,144 +10,18 @@
 
   function AuthGuard(): void {
     let protectedRoutes: string[] = [
-      'contact-list' // this is the protected route that we are going to use
+      '/contact-list', // this is the protected route that we are going to use
+      '/edit'
     ]
 
     if (protectedRoutes.indexOf(router.ActiveLink) > -1){
         // check if user is logged in
         if (!sessionStorage.getItem("user")){
             // redirect the user to login.html
-            router.ActiveLink = 'login'
+            //router.ActiveLink = 'login'
+            location.href = '/login'
         }
     } 
-  }
-
-  function LoadLink(link: string, data: string = ""): void  {
-    router.ActiveLink = link
-
-    AuthGuard() // we are calling this here to check if the user is logged in for security
-
-    router.LinkData = data
-    
-    history.pushState({}, "", router.ActiveLink)
-
-    // here we are trying to get 0 and 1 but we are not including 2, making it upper case and then getting the rest
-    document.title = router.ActiveLink.substring(0,1).toUpperCase() + router.ActiveLink.substring(1)
-
-    // remove all active links
-    $('ul>li>a').each(function() {
-      $(this).removeClass('active')
-    })
-
-    $(`li>a:contains(${ document.title })`).addClass('active') // we are no longer getting the title from the header title like before
-
-    // everytime we click a link we want to load the data/page associated with it
-    LoadContent()  
-
-  }
-
-  // this is to help the browser handle all the events that will be trigger so it don't freeze
-  function AddNavigationEvents(): void {
-    let navLinks = $('ul>li>a') // get all navigation links
-
-    // remove navigation events
-    navLinks.off('click')
-    navLinks.off('mouseover')
-
-    // loop through each navigation link and load the appropriate content/data on click
-    navLinks.on('click', function() {
-      LoadLink($(this).attr('data') as string)
-    })
-
-    // make the navigation links look clickable
-    navLinks.on('mouseover', function() {
-      $(this).css('cursor', 'pointer')
-    })
-
-  }
-
-  // here we are going to add the events to the click
-  function AddLinkEvents(link: string): void {
-    let linkQuery = $(`a.link[data=${ link }]`)
-
-    // remove all link events to clean the stack
-    linkQuery.off('click')
-    linkQuery.off('mouseover')
-    linkQuery.off('mouseout')
-
-    // add css to adjust the link aesthetics
-    linkQuery.css('text-decoration', 'underline')
-    linkQuery.css('color', 'blue')
-
-    // add link events
-    linkQuery.on('click', function() {
-      LoadLink(`${ link }`)
-    })
-
-    linkQuery.on('mouseover', function() {
-      $(this).css('cursor', 'pointer')
-      $(this).css('font-weight', 'bold')
-    })
-
-    linkQuery.on('mouseout', function() {
-      $(this).css('font-weight', 'normal')
-    })
-
-  }
-
-
-  /**
-   * Load the static header
-   * @param {HTML} html_data 
-   */
-  function LoadHeader(): Function{
-
-    $.get('./Views/Components/header.html', function(html_data) {
-
-      $("#navigationBar").html(html_data)
-
-      AddNavigationEvents()
-
-      CheckLogin()
-
-    })
-
-    return new Function()
-
-  }
-  /**
-   * This function loads content
-   * @returns {Function}
-   */
-  function LoadContent(): Function {
-
-    let pageName = router.ActiveLink
-    console.log(pageName)
-    $.get(`./Views/Content/${ pageName }.html`, function(html_data) {
-      $('main').html(html_data)
-
-      CheckLogin()
-
-      ActiveLinkCallBack() // we need to load the correct function to load the functionality we have set up for each page
-    })
-
-    return new Function()
-
-  }
-
-  /**
-   * This function loads footer
-   * @returns {Function}
-   */
-  function LoadFooter(): Function {
-
-    $.get('./Views/Components/footer.html', function(html_data) {
-
-      $('footer').html(html_data)
-
-    })
-
-    return new Function()
   }
 
   function DisplayHome(): Function {
@@ -179,69 +53,6 @@
     console.log("About Page");
 
     return new Function()
-  }
-
-  function DisplayContactList(): Function  {
-    if (localStorage.length > 0) {
-
-      let contactList = document.getElementById("contactList") as HTMLElement // Our contact list in the table of the contact-list page //Here we are returning the id we have on the table on the Contact List page
-      let data = "" // Add data to this variable. Append deserialized data from local storage to data
-      let keys = Object.keys(localStorage) // Return a String array of keys
-      let index = 1 // Count number of keys
-
-      //for every key in the keys collection
-      //for of = for every key in keys do something
-      for (const key of keys) {
-        console.log(`The index: ${index} - The key: ${key}`)
-
-        let contactData = localStorage.getItem(key) as string // Get localStorage data value related to the key// Get localStorage data value related to the key
-        let contact = new core.Contact("", "", "")
-
-        contact.deserialize(contactData)
-
-        // Inject repeatable row into the contactList
-        data +=
-          `<tr>
-            <th scope="row" class="text-center">${index}</th>
-            <td class="text-center">${contact.Name}</td>
-            <td class="text-center">${contact.ContactNumber}</td>
-            <td class="text-center">${contact.EmailAddress}</td>
-            <td class="text-center"><button value="${key}" class="btn btn-primary btn-sm edit"><i class="fas fa-edit fa-sm"></i>&nbsp; Edit</button></td>
-            <td class="text-center"><button value="${key}" class="btn btn-danger btn-sm delete"><i class="fas fa-trash-alt fa-sm"></i>&nbsp; Delete</button></td>
-          <tr/>
-
-          `
-        index++
-      }  
-
-      contactList.innerHTML = data
-
-      $("button.delete").on("click", function () {
-        if(confirm("Are you sure you want to delete this?")) //confirm method reserved for prompts / confirmations
-          //console.log("delete button was clicked")
-          localStorage.removeItem($(this).val() as string)
-
-        //location.href = '/contact-list'
-        LoadLink('contact-list')
-      })
-
-      $("button.edit").on("click",function () {
-        //console.log("Edit button was clicked")
-        //pass in the edit page url and the key value that we are getting from the button
-        //window.location.href = '/edit#' + $(this).val()
-        LoadLink('edit', $(this).val() as string)
-      })
-
-    }
-
-    //function for add button
-    $("#addButton").on("click", () => {
-      //location.href = '/edit#Add'
-      LoadLink('edit', 'Add')
-    })
-
-    return new Function()
-
   }
 
   function AddContact(fullName: string, contactNumber: string, emailAddress: string){
@@ -292,9 +103,9 @@
 
   function DisplayContacts(): Function {
 
-    $('a[data="contact-list"]').off('click')
-    $('a[data="contact-list"]').on('click', function() {
-      LoadLink('contact-list')
+    $('a[href="/contact-list"]').off('click')
+    $('a[href="/contact-list"]').on('click', function() {
+      location.href='/contact-list'
     })
 
     // Ice 8 - only display Show Contact List if user is logged in
@@ -338,14 +149,77 @@
 
   }
 
+  function DisplayContactList(): Function  {
+    if (localStorage.length > 0) {
+
+      let contactList = document.getElementById("contactList") as HTMLElement // Our contact list in the table of the contact-list page //Here we are returning the id we have on the table on the Contact List page
+      let data = "" // Add data to this variable. Append deserialized data from local storage to data
+      let keys = Object.keys(localStorage) // Return a String array of keys
+      let index = 1 // Count number of keys
+
+      //for every key in the keys collection
+      //for of = for every key in keys do something
+      for (const key of keys) {
+        console.log(`The index: ${index} - The key: ${key}`)
+
+        let contactData = localStorage.getItem(key) as string // Get localStorage data value related to the key// Get localStorage data value related to the key
+        let contact = new core.Contact("", "", "")
+
+        contact.deserialize(contactData)
+
+        // Inject repeatable row into the contactList
+        data +=
+          `<tr>
+            <th scope="row" class="text-center">${index}</th>
+            <td class="text-center">${contact.Name}</td>
+            <td class="text-center">${contact.ContactNumber}</td>
+            <td class="text-center">${contact.EmailAddress}</td>
+            <td class="text-center"><button value="${key}" class="btn btn-primary btn-sm edit"><i class="fas fa-edit fa-sm"></i>&nbsp; Edit</button></td>
+            <td class="text-center"><button value="${key}" class="btn btn-danger btn-sm delete"><i class="fas fa-trash-alt fa-sm"></i>&nbsp; Delete</button></td>
+          <tr/>
+
+          `
+        index++
+      }  
+
+      contactList.innerHTML = data
+
+      $("button.delete").on("click", function () {
+        if(confirm("Are you sure you want to delete this?")) //confirm method reserved for prompts / confirmations
+          //console.log("delete button was clicked")
+          localStorage.removeItem($(this).val() as string)
+
+        location.href = '/contact-list'
+        
+      })
+
+      $("button.edit").on("click",function () {
+        //console.log("Edit button was clicked")
+        //pass in the edit page url and the key value that we are getting from the button
+        window.location.href = '/edit#' + $(this).val()
+        
+      })
+
+    }
+
+    //function for add button
+    $("#addButton").on("click", () => {
+      location.href = '/edit#Add'
+      
+    })
+
+    return new Function()
+
+  }
+
   function DisplayEditPage(): Function {
 
     ContactFormValidate()
 
     //assign the word after the hash symbol and assign it to a variable
-    //let page = location.hash.substring(1)
+    let page = location.hash.substring(1)
 
-    let page = router.LinkData
+    console.log(page)
 
     switch (page) {
       case "Add":
@@ -365,8 +239,8 @@
             AddContact(fullName, contactNumber, emailAddress)
 
             //redirect to contact list
-            //location.href = "/contact-list"
-            LoadLink('contact-list')
+            location.href = "/contact-list"
+            
           })
         }
         break;
@@ -396,14 +270,13 @@
             localStorage.setItem(page, contact.serialize() as string) //transform the contact info into a string separated by commas
 
             //go back to contactlist.html
-            //location.href = '/contact-list'
-            LoadLink('contact-list')
+            location.href = '/contact-list'
 
           })
 
           $("#resetButton").on("click", () => {
-            //location.href = '/contact-list'
-            LoadLink('contact-list')
+            location.href = '/contact-list'
+            
           })
 
         }
@@ -427,8 +300,6 @@
     let messageArea = $('#messageArea')
     
     messageArea.hide()
-
-    AddLinkEvents('register')
 
     $('#loginButton').on('click', function(){
       let success = false // flag indicating if a user is successfully logged in
@@ -467,8 +338,7 @@
         messageArea.removeAttr('class').hide()
 
         // redirect the user to the secure area of our website - contact-list.html
-        //location.href = '/contact-list'
-        LoadLink('contact-list')
+        location.href = '/contact-list'
 
       }else{
         // display the error message
@@ -485,8 +355,7 @@
       document.forms[0].reset()
 
       // return to the home page
-      //location.href = '/home'
-      LoadLink('home')
+      location.href = '/home'
     })
 
     return new Function()
@@ -508,11 +377,10 @@
           `<a class="nav-link" data="login"><i class="fas fa-sign-in-alt"></i> Login</a>`
         )
 
-        AddNavigationEvents() // to call all the events necessary
 
         // redirect to login.html
-        //location.href = '/login'
-        LoadLink('login')
+        location.href = '/login'
+
 
       })
     }
@@ -520,8 +388,6 @@
  
   function DisplayRegisterPage(): Function {
     console.log("References Page");
-
-    AddLinkEvents('login')
 
     return new Function()
   }
@@ -537,40 +403,38 @@
 
     return new Function()
   }
-  /**
-   * @returns {function}
-   */
-  function ActiveLinkCallBack(): Function {
-
-    console.log(`ActiveLinkCallBack - ${ router.ActiveLink }`)
-    switch (router.ActiveLink) {
-      case "home": return DisplayHome()
-      case "projects": return DisplayProjects()
-      case "contact": return DisplayContacts()
-      case "contact-list": return DisplayContactList()
-      case "references": return DisplayReferences()
-      case "login": return DisplayLoginPage()
-      case "edit": return DisplayEditPage()
-      case "services": return DisplayServices()
-      case "register": return DisplayRegisterPage()
-      case "about": return DisplayAbout()
-      case "404": return Display404Page()
-      default:
-        console.error(`Error: Callback does not Exist... ${ router.ActiveLink }`)
-        return new Function()
-    }
-
-  }
-
+  
   function Start() {
     console.log("App Started Successfully")
 
-    LoadHeader()
+    let pageId = $('body')[0].getAttribute('id')
 
-    //LoadContent()  
-    LoadLink("home")
+    CheckLogin()
 
-    LoadFooter()
+    switch (pageId) {
+      case "home":
+          DisplayHome()
+      case "projects":
+          DisplayProjects()
+      case "contact":
+          DisplayContacts()
+      case "contact-list":
+          AuthGuard()
+          DisplayContactList()
+      case "references":
+          DisplayReferences()
+      case "edit":
+          AuthGuard()
+          DisplayEditPage()
+      case "login":
+          DisplayLoginPage()
+      case "register":
+          DisplayRegisterPage()
+      case "about":
+          DisplayAbout()    
+      case "404":
+          Display404Page()
+    }
   }
 
   window.addEventListener("load", Start)
