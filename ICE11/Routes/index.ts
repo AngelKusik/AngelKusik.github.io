@@ -29,6 +29,11 @@ router.get('/register', (req, res, next) => {
     res.render('index', { title: 'Register', page: 'register', displayName: '' })
 })
 
+// GET about
+router.get('/about', (req, res, next) => {
+    res.render('index', { title: 'About', page: 'about', displayName: '' })
+})
+
 // Temp Routes
 // GET contact-list
 router.get('/contact-list', (req, res, next) => {

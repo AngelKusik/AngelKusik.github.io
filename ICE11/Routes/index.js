@@ -23,6 +23,9 @@ router.get('/login', (req, res, next) => {
 router.get('/register', (req, res, next) => {
     res.render('index', { title: 'Register', page: 'register', displayName: '' });
 });
+router.get('/about', (req, res, next) => {
+    res.render('index', { title: 'About', page: 'about', displayName: '' });
+});
 router.get('/contact-list', (req, res, next) => {
     res.render('index', { title: 'Contact-List', page: 'contact-list', displayName: '' });
 });

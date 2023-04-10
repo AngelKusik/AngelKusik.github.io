@@ -374,7 +374,7 @@
 
         // switch logout link to login link
         $('#login').html(
-          `<a class="nav-link" data="login"><i class="fas fa-sign-in-alt"></i> Login</a>`
+          `<a class="nav-link" href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>`
         )
 
 
