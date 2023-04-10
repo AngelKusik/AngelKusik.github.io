@@ -253,6 +253,8 @@
                 DisplayRegisterPage();
             case "about":
                 DisplayAbout();
+            case "services":
+                DisplayServices();
             case "404":
                 Display404Page();
         }

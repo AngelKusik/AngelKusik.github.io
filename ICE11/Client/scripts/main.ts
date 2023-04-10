@@ -431,7 +431,9 @@
       case "register":
           DisplayRegisterPage()
       case "about":
-          DisplayAbout()    
+          DisplayAbout() 
+      case "services":
+        DisplayServices()   
       case "404":
           Display404Page()
     }
