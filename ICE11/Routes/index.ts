@@ -34,6 +34,11 @@ router.get('/about', (req, res, next) => {
     res.render('index', { title: 'About', page: 'about', displayName: '' })
 })
 
+// GET services
+router.get('/services', (req, res, next) => {
+    res.render('index', { title: 'Services', page: 'services', displayName: '' })
+})
+
 // Temp Routes
 // GET contact-list
 router.get('/contact-list', (req, res, next) => {
